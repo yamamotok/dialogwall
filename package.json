@@ -1,0 +1,63 @@
+{
+  "author": {
+    "name": "Keisuke Yamamoto",
+    "email": "keisuke@modelhouse.tech"
+  },
+  "dependencies": {
+    "classnames": "^2.2.5",
+    "highwall": "^0.2.2"
+  },
+  "description": "A react component which manges and provides dialogs.",
+  "devDependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
+    "@types/classnames": "^2.2.10",
+    "@types/jest": "^24.9.1",
+    "@types/node": "^12.12.38",
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
+    "@types/shelljs": "^0.8.7",
+    "@typescript-eslint/eslint-plugin": "^2.33.0",
+    "@typescript-eslint/parser": "^2.33.0",
+    "bootstrap": "^4.5.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.3",
+    "node-sass": "^4.14.1",
+    "prettier": "^2.0.5",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "^3.4.1",
+    "rimraf": "^3.0.2",
+    "shelljs": "^0.8.4",
+    "typescript": "^3.9.2"
+  },
+  "homepage": "https://github.com/yamamotok/dialogwall",
+  "keywords": [
+    "typescript",
+    "react",
+    "dialog"
+  ],
+  "license": "MIT",
+  "main": "dist/index.js",
+  "name": "dialogwall",
+  "peerDependencies": {
+    "bootstrap": "^4.0.0",
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yamamotok/dialogwall.git"
+  },
+  "scripts": {
+    "prepare": "npm run build",
+    "build": "rimraf dist && tsc -p tsconfig.build.json && node postbuild.js",
+    "test": "react-scripts test",
+    "prettier": "prettier --ignore-path .gitignore --write \"src/**/*.ts\" \"src/**/*.tsx\" \"src/**/*.css\" \"./**/*.json\" \"./**/*.js\"",
+    "eslint": "eslint --fix --ext .ts,.tsx src/",
+    "format": "npm run prettier && npm run eslint"
+  },
+  "types": "dist/index.d.ts",
+  "version": "0.1.0"
+}
