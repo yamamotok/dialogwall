@@ -1,12 +1,11 @@
-import { HideFunction } from './HideFunction';
+import { ResultCallback } from './ResultCallback';
 
 /**
  * Props which will be given to a dialog component when it is instantiated.
  */
 export interface DialogComponentProps {
   /**
-   * Function which will be called by dialog component to hide itself.
-   * @param result - dialog result, e.g. ok, yes, canceled, no.
+   * Custom dialog needs to call this for closing it self.
    */
-  hide: HideFunction;
+  close: ResultCallback;
 }

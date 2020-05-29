@@ -1,13 +1,26 @@
 {
+  "name": "dialogwall",
+  "description": "A React component which provides simple dialog service",
+  "version": "0.0.2",
   "author": {
     "name": "Keisuke Yamamoto",
     "email": "keisuke@modelhouse.tech"
   },
+  "homepage": "https://github.com/yamamotok/dialogwall",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yamamotok/dialogwall.git"
+  },
+  "keywords": [
+    "typescript",
+    "react",
+    "dialog"
+  ],
+  "license": "MIT",
   "dependencies": {
     "classnames": "^2.2.5",
-    "highwall": "^0.2.2"
+    "highwall": "^0.3.0"
   },
-  "description": "A react component which manges and provides dialogs.",
   "devDependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
@@ -32,32 +45,19 @@
     "shelljs": "^0.8.4",
     "typescript": "^3.9.2"
   },
-  "homepage": "https://github.com/yamamotok/dialogwall",
-  "keywords": [
-    "typescript",
-    "react",
-    "dialog"
-  ],
-  "license": "MIT",
-  "main": "dist/index.js",
-  "name": "dialogwall",
   "peerDependencies": {
     "bootstrap": "^4.0.0",
     "react": "^16.8.0",
     "react-dom": "^16.8.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/yamamotok/dialogwall.git"
-  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "prepare": "npm run build",
     "build": "rimraf dist && tsc -p tsconfig.build.json && node postbuild.js",
     "test": "react-scripts test",
-    "prettier": "prettier --ignore-path .gitignore --write \"src/**/*.ts\" \"src/**/*.tsx\" \"src/**/*.css\" \"./**/*.json\" \"./**/*.js\"",
+    "prettier": "prettier --ignore-path .gitignore --write \"src/**/*.{tsx,ts,js,json,css,scss}\"",
     "eslint": "eslint --fix --ext .ts,.tsx src/",
     "format": "npm run prettier && npm run eslint"
-  },
-  "types": "dist/index.d.ts",
-  "version": "0.1.0"
+  }
 }

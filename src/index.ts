@@ -1,4 +1,5 @@
 export { DialogWall, useDialog } from './lib/DialogWall';
-export type { HideFunction } from './lib/HideFunction';
+export type { ResultCallback } from './lib/ResultCallback';
 export type { DialogComponentProps } from './lib/DialogComponentProps';
-export type { DialogOptions } from './lib/DialogOptions';
+export type { DialogComponent } from './lib/DialogComponent';
+export type { DialogSpec } from './lib/DialogSpec';

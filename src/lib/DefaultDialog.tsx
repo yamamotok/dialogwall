@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import './DialogWall.css';
-import { DialogComponentProps } from './DialogComponentProps';
+import { DialogComponent } from './DialogComponent';
+import { ResultCallback } from './ResultCallback';
 
 export const DEFAULT_POSITIVE_BUTTON_LABEL = 'OK';
-export const DEFAULT_NEGATIVE_BUTTON_LABEL = 'Cancel';
 
 /**
- * Props for the default dialog.
+ * Props for built-in default dialog.
  */
 export interface DefaultDialogProps {
   message: string;
@@ -16,22 +16,47 @@ export interface DefaultDialogProps {
 }
 
 /**
- * Default dialog.
+ * Button on dialog.
  */
-export const DefaultDialog: React.FC<DialogComponentProps & DefaultDialogProps> = (props) => {
-  const positive = props.positiveButtonLabel || DEFAULT_POSITIVE_BUTTON_LABEL;
-  const negative = props.negativeButtonLabel || DEFAULT_NEGATIVE_BUTTON_LABEL;
+const Button: React.FC<{ label?: string; close: ResultCallback }> = ({ label, close }) => {
+  if (!label) return null;
+  return (
+    <button className="btn btn-link" onClick={(): void => close(label)}>
+      {label}
+    </button>
+  );
+};
+
+/**
+ * A built-in default dialog.
+ */
+export const DefaultDialog: DialogComponent<DefaultDialogProps> = (props) => {
+  let positive = props.positiveButtonLabel;
+  const negative = props.negativeButtonLabel;
+  if (!positive && !negative) {
+    // If no label was given, set up only positive button with default label.
+    positive = DEFAULT_POSITIVE_BUTTON_LABEL;
+  }
+
+  // Esc key handling
+  useEffect(() => {
+    if (negative) {
+      const onEscPressed = (e: KeyboardEvent): void => {
+        if (e.key === 'Escape') {
+          props.close(negative);
+        }
+      };
+      document.addEventListener('keydown', onEscPressed);
+      return (): void => document.removeEventListener('keydown', onEscPressed);
+    }
+  });
 
   return (
     <div className="container DialogWallDefault">
       <div className="message">{props.message}</div>
       <div className="buttons">
-        <button className="btn btn-link" onClick={() => props.hide(negative)}>
-          {negative}
-        </button>
-        <button className="btn btn-link" onClick={() => props.hide(positive)}>
-          {positive}
-        </button>
+        <Button label={negative} close={props.close} />
+        <Button label={positive} close={props.close} />
       </div>
     </div>
   );

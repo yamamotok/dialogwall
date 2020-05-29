@@ -3,102 +3,40 @@ import classNames from 'classnames';
 
 import './DialogWall.css';
 import { HighWall } from 'highwall';
-import { DefaultDialog, DefaultDialogProps } from './DefaultDialog';
 import { DialogComponentProps } from './DialogComponentProps';
-import { DialogOptions } from './DialogOptions';
-import { HideFunction } from './HideFunction';
+import { DialogSpec } from './DialogSpec';
+import { ResultCallback } from './ResultCallback';
+import { DialogService } from './DialogService';
 
 /**
- * Builder for built-in dialog.
- */
-class DialogBuilder {
-  private callback?: HideFunction;
-
-  private dialogProps: DefaultDialogProps = {
-    message: '(No message)',
-  };
-
-  constructor(private service: DialogService) {}
-
-  setMessage(message: string): DialogBuilder {
-    this.dialogProps.message = message;
-    return this;
-  }
-
-  setButtonLabel(positive: string, negative?: string): DialogBuilder {
-    this.dialogProps.positiveButtonLabel = positive;
-    this.dialogProps.negativeButtonLabel = negative;
-    return this;
-  }
-
-  setCallback(callback: HideFunction): DialogBuilder {
-    this.callback = callback;
-    return this;
-  }
-
-  build(): void {
-    this.service.show((props) => <DefaultDialog {...this.dialogProps} {...props} />, this.callback);
-  }
-}
-
-/**
- * Service which provides functionality for controlling dialog.
- */
-export class DialogService {
-  constructor(private setOptions: (newOpts: DialogOptions | undefined) => void) {}
-
-  /**
-   * Show a dialog.
-   * @param component - dialog component
-   * @param onHide - callback which will be called when the dialog is being hidden.
-   */
-  show(component: React.ComponentType<DialogComponentProps>, onHide?: HideFunction): void {
-    this.setOptions({ component, onHide });
-  }
-
-  /**
-   * Hide a currently visible dialog.
-   */
-  hide(): void {
-    this.setOptions(undefined);
-  }
-
-  /**
-   * Get dialog builder for showing a built-in dialog.
-   */
-  builder(): DialogBuilder {
-    return new DialogBuilder(this);
-  }
-}
-
-/**
- * Context.
+ * Context, which provides DialogService to child components.
  */
 const DialogContext = React.createContext<DialogService | undefined>(undefined);
 
 /**
- * Utility which provides the context (dialog service).
+ * Utility for using DialogService.
  */
 export function useDialog(): DialogService {
   const service = useContext(DialogContext);
   if (!service) {
-    throw Error('The context is undefined, probably implementation error.');
+    throw Error('DialogContext is undefined, probably caused by implementation error.');
   }
   return service;
 }
 
 /**
- * Main component which is responsible for dialog rendering and providing dialog service.
+ * Main component, HOC which is responsible for dialog rendering and management.
  */
 export const DialogWall: React.FC = (props) => {
-  const [options, setOptions] = useState<DialogOptions>();
+  const [spec, setSpec] = useState<DialogSpec>();
   const [phase, setPhase] = useState<string>('initial');
 
-  const service = new DialogService(setOptions);
+  // Instantiate the service.
+  const service = new DialogService(setSpec);
 
-  // Just for animation, change css class
+  // Just for fade-in animation, changing CSS classes
   useEffect(() => {
-    if (!options) {
+    if (!spec) {
       setPhase('initial');
       return;
     }
@@ -106,18 +44,20 @@ export const DialogWall: React.FC = (props) => {
       setPhase('ready');
     }, 10);
     return (): void => clearTimeout(timer);
-  }, [options]);
+  }, [spec]);
 
-  // No dialog should be shown
-  if (!options) {
+  // No spec - No need to show dialog
+  if (!spec) {
     return <DialogContext.Provider value={service}>{props.children}</DialogContext.Provider>;
   }
 
-  // Hide dialog
-  const hide: HideFunction = (reason) => {
-    service.hide();
+  // Close a dialog which is visible currently
+  const closeCurrent: ResultCallback = (reason) => {
+    setSpec(undefined);
     setTimeout(() => {
-      if (options.onHide) options.onHide(reason);
+      if (spec.onClose) {
+        spec.onClose(reason);
+      }
     }, 0);
   };
 
@@ -128,7 +68,7 @@ export const DialogWall: React.FC = (props) => {
       <HighWall className="DialogWall">
         <div className={classNames('backdrop', phase)}>
           <div className={classNames('content', phase)}>
-            {React.createElement<DialogComponentProps>(options.component, { hide })}
+            {React.createElement<DialogComponentProps>(spec.component, { close: closeCurrent })}
           </div>
         </div>
       </HighWall>
