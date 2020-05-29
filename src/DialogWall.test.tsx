@@ -1,7 +1,7 @@
 import React, { MouseEventHandler } from 'react';
 import { act, cleanup, getByTestId, getByText, queryByText, render } from '@testing-library/react';
 
-import { DialogWall, useDialog } from './index';
+import { DialogWall, useDialog } from './DialogWall';
 
 describe('App using DialogWall', () => {
   const Page: React.FC = () => {
