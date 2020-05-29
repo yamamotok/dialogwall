@@ -27,7 +27,7 @@ ReactDOM.render(
 ## Use Built-in Dialog
 
 ```typescript jsx
-import { useDialog } from 'DialogWall';
+import { useDialog } from 'dialogwall';
 
 const Page: React.FC = () => {
     const dialog = useDialog();
@@ -51,7 +51,7 @@ const Page: React.FC = () => {
 ## Use Custom Dialog
 
 ```typescript jsx
-import { DialogComponent, useDialog } from 'DialogWall';
+import { DialogComponent, useDialog } from 'dialogwall';
 
 const CustomDialog: DialogComponent = (props) => {
     const onClick: MouseEventHandler = (e) => props.close('Closed');
