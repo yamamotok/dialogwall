@@ -1,7 +1,7 @@
 {
   "name": "dialogwall",
   "description": "A React component which provides simple dialog service",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": {
     "name": "Keisuke Yamamoto",
     "email": "keisuke@modelhouse.tech"
