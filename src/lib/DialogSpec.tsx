@@ -14,4 +14,14 @@ export interface DialogSpec {
    * Callback which will be called immediately after the dialog was closed.
    */
   onClose?: ResultCallback;
+
+  /**
+   * Margin click will invoke cancellation.
+   */
+  useMarginClickForCancel?: boolean;
+
+  /**
+   * ESC key will invoke cancellation.
+   */
+  useEscForCancel?: boolean;
 }

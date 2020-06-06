@@ -1,12 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react';
-import classNames from 'classnames';
+import React, { useContext } from 'react';
+import { HighWall } from 'highwall';
 
 import './DialogWall.css';
-import { HighWall } from 'highwall';
 import { DialogComponentProps } from './DialogComponentProps';
-import { DialogSpec } from './DialogSpec';
 import { ResultCallback } from './ResultCallback';
-import { DialogService } from './DialogService';
+import { DialogService, useDialogService } from './DialogService';
+import { Backdrop } from './modules/Backdrop';
+import { Layout } from './modules/Layout';
 
 /**
  * Context, which provides DialogService to child components.
@@ -28,49 +28,28 @@ export function useDialog(): DialogService {
  * Main component, HOC which is responsible for dialog rendering and management.
  */
 export const DialogWall: React.FC = (props) => {
-  const [spec, setSpec] = useState<DialogSpec>();
-  const [phase, setPhase] = useState<string>('initial');
-
   // Instantiate the service.
-  const service = new DialogService(setSpec);
+  const service = useDialogService();
 
-  // Just for fade-in animation, changing CSS classes
-  useEffect(() => {
-    if (!spec) {
-      setPhase('initial');
-      return;
-    }
-    const timer = setTimeout(() => {
-      setPhase('ready');
-    }, 10);
-    return (): void => clearTimeout(timer);
-  }, [spec]);
-
-  // No spec - No need to show dialog
-  if (!spec) {
+  // If no spec is there, no need to show anything.
+  if (!service.isShown()) {
     return <DialogContext.Provider value={service}>{props.children}</DialogContext.Provider>;
   }
 
-  // Close a dialog which is visible currently
-  const closeCurrent: ResultCallback = (reason) => {
-    setSpec(undefined);
-    setTimeout(() => {
-      if (spec.onClose) {
-        spec.onClose(reason);
-      }
-    }, 0);
+  const renderDialog = (): React.ReactElement => {
+    const close: ResultCallback = (reason) => {
+      service.discard(reason);
+    };
+    return React.createElement<DialogComponentProps>(service.current().component, { close });
   };
 
-  // Render a dialog
   return (
     <DialogContext.Provider value={service}>
       {props.children}
       <HighWall className="DialogWall">
-        <div className={classNames('backdrop', phase)}>
-          <div className={classNames('content', phase)}>
-            {React.createElement<DialogComponentProps>(spec.component, { close: closeCurrent })}
-          </div>
-        </div>
+        <Backdrop>
+          <Layout>{renderDialog()}</Layout>
+        </Backdrop>
       </HighWall>
     </DialogContext.Provider>
   );

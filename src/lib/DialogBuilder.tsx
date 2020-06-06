@@ -1,51 +1,81 @@
 import React from 'react';
 
-import { ResultCallback } from './ResultCallback';
-import { DefaultDialog, DefaultDialogProps } from './DefaultDialog';
+import { DefaultDialog, DefaultDialogProps } from './modules/DefaultDialog';
 import { DialogService } from './DialogService';
 import { DialogSpec } from './DialogSpec';
+import { ResultCallback } from './ResultCallback';
 
 /**
- * Builder utility for showing built-in default dialog.
- *
- * As you can obtain a new DialogBuilder instance through DialogService,
- * please do not instantiate this class by `new`.
+ * Builder for showing built-in default dialog.
+ * <p>
+ * Do not instantiate this class by `new`,
+ * instead you can obtain a new DialogBuilder instance by using {@link DialogService#builder()}.
  */
 export class DialogBuilder {
-  private callback?: ResultCallback;
+  private spec: Partial<DialogSpec> = {
+    useEscForCancel: true,
+    useMarginClickForCancel: true,
+  };
   private dialogProps: DefaultDialogProps = {
     message: '(No message)',
   };
 
   constructor(private service: DialogService) {}
 
+  /**
+   * Message appears on dialog, in simple text.
+   */
   setMessage(message: string): DialogBuilder {
     this.dialogProps.message = message;
     return this;
   }
 
-  setPositiveButtonLabel(label: string): DialogBuilder {
-    this.dialogProps.positiveButtonLabel = label;
+  /**
+   * Positive button.
+   * @param label - button label
+   * @param value - will be returned as dialog result (default: true).
+   */
+  setPositiveButton(label: string, value?: unknown): DialogBuilder {
+    if (value === undefined) value = true;
+    this.dialogProps.positive = { label, value };
     return this;
   }
 
-  setNegativeButtonLabel(label: string): DialogBuilder {
-    this.dialogProps.negativeButtonLabel = label;
+  /**
+   * Negative button.
+   * @param label - button label
+   * @param value - will be returned as dialog result (default: false).
+   */
+  setNegativeButton(label: string, value?: unknown): DialogBuilder {
+    if (value === undefined) value = false;
+    this.dialogProps.negative = { label, value };
     return this;
   }
 
-  setCallback(callback: ResultCallback): DialogBuilder {
-    this.callback = callback;
+  /**
+   * Set result callback.
+   * @param callback - will be called immediately after dialog was closed.
+   */
+  setResultCallback(callback: ResultCallback): DialogBuilder {
+    this.spec.onClose = callback;
+    return this;
+  }
+
+  /**
+   * Set other specs.
+   */
+  setSpec(spec: Partial<DialogSpec>): DialogBuilder {
+    this.spec = { ...this.spec, ...spec };
     return this;
   }
 
   /**
    * Build and show the dialog.
    */
-  build(): void {
+  show(): void {
     const spec: DialogSpec = {
       component: (props) => <DefaultDialog {...this.dialogProps} {...props} />,
-      onClose: this.callback,
+      ...this.spec,
     };
     this.service.show(spec);
   }

@@ -1,51 +1,61 @@
 import React, { MouseEventHandler } from 'react';
-import { act, cleanup, getByTestId, getByText, queryByText, render } from '@testing-library/react';
+import { act, cleanup, getByText, queryByTestId, render } from '@testing-library/react';
 
 import { DialogWall, useDialog } from './index';
 
-describe('App using DialogWall', () => {
-  const Page: React.FC = () => {
-    const dialog = useDialog();
-    const onClick: MouseEventHandler = (e) => {
-      dialog.builder().setPositiveButtonLabel('Accept').build();
-    };
-    return (
-      <div>
-        <button data-testid="open-button" onClick={onClick}>
-          Open
-        </button>
-      </div>
-    );
+const Page: React.FC = () => {
+  const dialog = useDialog();
+  const showDialog: MouseEventHandler = (e) => {
+    dialog.builder().setMessage('Test').show();
   };
+  const showSpinner: MouseEventHandler = (e) => {
+    dialog.spinnerBuilder().show();
+  };
+  return (
+    <div>
+      <button onClick={showDialog}>showDialog</button>
+      <button onClick={showSpinner}>showSpinner</button>
+    </div>
+  );
+};
 
-  const App: React.FC = () => {
-    return (
-      <div>
-        <DialogWall>
-          <Page />
-        </DialogWall>
-      </div>
-    );
-  };
+const App: React.FC = () => {
+  return (
+    <DialogWall>
+      <Page />
+    </DialogWall>
+  );
+};
+describe('dialogwall', () => {
+  beforeEach(() => {
+    const mock = jest.fn();
+    mock.mockReturnValue(undefined);
+    document.elementFromPoint = mock;
+  });
 
   afterEach(() => {
     cleanup();
   });
 
-  it('shows dialog and then it is closed', () => {
+  it('shows dialog', () => {
     act(() => {
       render(<App />);
     });
-    const openButton = getByTestId(document.documentElement, 'open-button');
-
     act(() => {
-      openButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      const button = getByText(document.documentElement, 'showDialog');
+      button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
-    const closeButton = getByText(document.documentElement, 'Accept');
+    expect(queryByTestId(document.documentElement, 'dialogwall-default-dialog')).not.toBeNull();
+  });
 
+  it('shows spinner', () => {
     act(() => {
-      closeButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      render(<App />);
     });
-    expect(queryByText(document.documentElement, 'Accept')).toBeNull();
+    act(() => {
+      const button = getByText(document.documentElement, 'showSpinner');
+      button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    expect(queryByTestId(document.documentElement, 'dialogwall-default-spinner')).not.toBeNull();
   });
 });
