@@ -1,8 +1,7 @@
-import { useState } from 'react';
-
 import { DialogSpec } from './DialogSpec';
 import { DialogBuilder } from './DialogBuilder';
 import { SpinnerBuilder } from './SpinnerBuilder';
+import { DialogSpecStore } from './DialogSpecStore';
 
 /**
  * Service which provides interface for dialog control.
@@ -41,28 +40,38 @@ export interface DialogService {
 }
 
 /**
+ * (Internal type for friends.)
+ */
+export type DialogServiceInternal = DialogService & { _store: () => DialogSpecStore };
+
+/**
  * Provide DialogService implementation.
  */
-export const useDialogService = (): DialogService => {
-  const [spec, setSpec] = useState<DialogSpec>();
+export const dialogServiceFactory = (): DialogService => {
+  const store = new DialogSpecStore();
+
   const service = {
+    _store(): DialogSpecStore {
+      return store;
+    },
     isShown(): boolean {
-      return spec !== undefined;
+      return store.spec !== undefined;
     },
     current(): DialogSpec {
-      if (!spec) {
+      if (!store.spec) {
         throw new Error('No current spec. Maybe need to use `isShown()` beforehand.');
       }
-      return spec;
+      return store.spec;
     },
     show(spec: DialogSpec): void {
-      setSpec(spec);
+      store.spec = spec;
     },
     discard(reason?: unknown): void {
-      setTimeout(() => {
-        if (spec?.onClose) spec.onClose(reason);
-      }, 0);
-      setSpec(undefined);
+      const onClose = store.spec?.onClose;
+      if (onClose) {
+        setTimeout(() => onClose(reason), 0);
+      }
+      store.spec = undefined;
     },
     builder(): DialogBuilder {
       return new DialogBuilder(service);

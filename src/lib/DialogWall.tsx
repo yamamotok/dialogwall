@@ -1,12 +1,13 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { HighWall } from 'highwall';
 
 import './DialogWall.css';
 import { DialogComponentProps } from './DialogComponentProps';
 import { ResultCallback } from './ResultCallback';
-import { DialogService, useDialogService } from './DialogService';
+import { DialogService, DialogServiceInternal, dialogServiceFactory } from './DialogService';
 import { Backdrop } from './modules/Backdrop';
 import { Layout } from './modules/Layout';
+import { DialogSpec } from './DialogSpec';
 
 /**
  * Context, which provides DialogService to child components.
@@ -24,16 +25,18 @@ export function useDialog(): DialogService {
   return service;
 }
 
-/**
- * Main component, HOC which is responsible for dialog rendering and management.
- */
-export const DialogWall: React.FC = (props) => {
-  // Instantiate the service.
-  const service = useDialogService();
+const Inner: React.FC<{ service: DialogService }> = ({ service }) => {
+  const [, setSpec] = useState<DialogSpec | undefined>(undefined);
+
+  useEffect(() => {
+    const _service = service as DialogServiceInternal;
+    _service._store().setListener(setSpec);
+    return (): void => _service._store().clearListener();
+  }, [service]);
 
   // If no spec is there, no need to show anything.
   if (!service.isShown()) {
-    return <DialogContext.Provider value={service}>{props.children}</DialogContext.Provider>;
+    return null;
   }
 
   const renderDialog = (): React.ReactElement => {
@@ -44,13 +47,24 @@ export const DialogWall: React.FC = (props) => {
   };
 
   return (
+    <HighWall className="DialogWall">
+      <Backdrop>
+        <Layout>{renderDialog()}</Layout>
+      </Backdrop>
+    </HighWall>
+  );
+};
+
+/**
+ * Main component, HOC which is responsible for dialog rendering and management.
+ */
+export const DialogWall: React.FC = (props) => {
+  const service = dialogServiceFactory();
+
+  return (
     <DialogContext.Provider value={service}>
       {props.children}
-      <HighWall className="DialogWall">
-        <Backdrop>
-          <Layout>{renderDialog()}</Layout>
-        </Backdrop>
-      </HighWall>
+      <Inner service={service} />
     </DialogContext.Provider>
   );
 };
