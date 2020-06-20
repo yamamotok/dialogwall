@@ -9,7 +9,7 @@ const Page: React.FC = () => {
     dialog.builder().setMessage('Test').show();
   };
   const showSpinner: MouseEventHandler = (e) => {
-    dialog.spinnerBuilder().show();
+    dialog.showSpinner();
   };
   return (
     <div>

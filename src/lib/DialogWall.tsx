@@ -7,7 +7,7 @@ import { ResultCallback } from './ResultCallback';
 import { DialogService, DialogServiceInternal, dialogServiceFactory } from './DialogService';
 import { Backdrop } from './modules/Backdrop';
 import { Layout } from './modules/Layout';
-import { DialogSpec } from './DialogSpec';
+import { DialogSpec, DialogSpecNamed } from './DialogSpec';
 
 /**
  * Context, which provides DialogService to child components.
@@ -26,30 +26,56 @@ export function useDialog(): DialogService {
 }
 
 const Inner: React.FC<{ service: DialogService }> = ({ service }) => {
-  const [, setSpec] = useState<DialogSpec | undefined>(undefined);
+  const [dialog, setDialog] = useState<DialogSpecNamed | undefined>(undefined);
+  const [spinner, setSpinner] = useState<DialogSpec | undefined>(undefined);
 
   useEffect(() => {
     const _service = service as DialogServiceInternal;
-    _service._store().setListener(setSpec);
-    return (): void => _service._store().clearListener();
+    _service.dialog.observe(setDialog);
+    _service.spinner.observe(setSpinner);
+    return (): void => {
+      _service.dialog.stopObserving();
+      _service.spinner.stopObserving();
+    };
   }, [service]);
 
-  // If no spec is there, no need to show anything.
-  if (!service.isShown()) {
+  const renderDialog = (): React.ReactElement | null => {
+    if (!dialog) {
+      return null;
+    }
+    const close: ResultCallback = (reason) => {
+      service.hide(dialog, reason);
+    };
+    return (
+      <Layout>
+        {React.createElement<DialogComponentProps>(dialog.component, { close })}
+      </Layout>
+    );
+  };
+
+  const renderSpinner = (): React.ReactElement | null => {
+    if (!spinner) {
+      return null;
+    }
+    const close: ResultCallback = () => {
+      service.hideSpinner();
+    };
+    return (
+      <Layout>
+        {React.createElement<DialogComponentProps>(spinner.component, { close })}
+      </Layout>
+    );
+  };
+
+  if (!dialog && !spinner) {
     return null;
   }
 
-  const renderDialog = (): React.ReactElement => {
-    const close: ResultCallback = (reason) => {
-      service.discard(reason);
-    };
-    return React.createElement<DialogComponentProps>(service.current().component, { close });
-  };
-
   return (
     <HighWall className="DialogWall">
-      <Backdrop>
-        <Layout>{renderDialog()}</Layout>
+      <Backdrop light={!dialog && !!spinner}>
+        {renderDialog()}
+        {renderSpinner()}
       </Backdrop>
     </HighWall>
   );

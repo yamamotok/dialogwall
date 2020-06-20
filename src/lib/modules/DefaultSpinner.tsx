@@ -23,7 +23,7 @@ export const DefaultSpinner: DialogComponent<DefaultSpinnerProps> = (props) => {
     const timeout = props.timeout || 0;
     if (timeout > 0) {
       const timer = setTimeout(() => {
-        service.discard(false);
+        service.hideSpinner();
       }, timeout);
       return (): void => clearTimeout(timer);
     }

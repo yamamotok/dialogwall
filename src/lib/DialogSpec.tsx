@@ -25,3 +25,7 @@ export interface DialogSpec {
    */
   useEscForCancel?: boolean;
 }
+
+export interface DialogSpecNamed extends DialogSpec {
+  name: string;
+}

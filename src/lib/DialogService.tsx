@@ -1,84 +1,116 @@
-import { DialogSpec } from './DialogSpec';
+import React, { ReactElement } from 'react';
+
+import { DialogSpec, DialogSpecNamed } from './DialogSpec';
 import { DialogBuilder } from './DialogBuilder';
-import { SpinnerBuilder } from './SpinnerBuilder';
-import { DialogSpecStore } from './DialogSpecStore';
+import { Observable } from './Observable';
+import { DefaultSpinner } from './modules/DefaultSpinner';
+import { DialogComponent } from './DialogComponent';
 
 /**
- * Service which provides interface for dialog control.
+ * DialogService.
  */
 export interface DialogService {
   /**
-   * Any dialog shown?
+   * Show dialog.
+   * @param spec - specification
+   * @param name - optional, auto-generated name will be given if omitted.
    */
-  isShown(): boolean;
+  show(spec: DialogSpec, name?: string): string;
 
   /**
-   * Specification for currently visible dialog.
+   * Hide dialog.
+   * @param spec - specification, which must have name to identify the target dialog
+   * @param reason - arbitrary value which shows why the dialog was closed.
    */
-  current(): DialogSpec;
+  hide(spec: { name: string }, reason?: unknown): void;
 
   /**
-   * Show a dialog.
-   * @param spec - Dialog specification
+   * Get current (currently visible) dialog.
+   * `undefined` will be returned if nothing is visible.
    */
-  show(spec: DialogSpec): void;
+  getCurrent(): undefined | DialogSpecNamed;
 
   /**
-   * Discard shown dialog.
-   */
-  discard(reason?: unknown): void;
-
-  /**
-   * Get builder for showing built-in dialog.
+   * Build and show dialog by using built-in dialog.
    */
   builder(): DialogBuilder;
 
   /**
-   * Get builder for showing built-in spinner.
+   * Show spinner.
+   * @param spec - specification, built-in spinner will be used if omitted.
    */
-  spinnerBuilder(): SpinnerBuilder;
+  showSpinner(spec?: DialogSpec): void;
+
+  /**
+   * Hide spinner.
+   */
+  hideSpinner(): void;
 }
 
 /**
- * (Internal type for friends.)
+ * DialogService, which is is an internal class used inside library.
+ * Interface {@link DialogService} will be exposed outside instead.
  */
-export type DialogServiceInternal = DialogService & { _store: () => DialogSpecStore };
+export class DialogServiceInternal implements DialogService {
+  private readonly _spinner: Observable<DialogSpec>;
+  private readonly _dialog: Observable<DialogSpecNamed>;
+  private serial = 0;
+
+  constructor() {
+    this._spinner = new Observable<DialogSpec>();
+    this._dialog = new Observable<DialogSpecNamed>();
+  }
+
+  get dialog(): Observable<DialogSpecNamed> {
+    return this._dialog;
+  }
+
+  get spinner(): Observable<DialogSpec> {
+    return this._spinner;
+  }
+
+  show(spec: DialogSpec): string {
+    this.serial++;
+    const name = `${this.serial}`;
+    this.dialog.set({ ...spec, name });
+    return name;
+  }
+
+  hide(spec: { name: string }, reason?: unknown): void {
+    const name = spec.name;
+    const dialog = this.dialog.get();
+    if (!dialog || dialog.name !== name) {
+      return;
+    }
+    const onClose = dialog.onClose;
+    if (onClose) {
+      setTimeout(() => onClose(reason), 0);
+    }
+    this.dialog.set(undefined);
+  }
+
+  getCurrent(): undefined | DialogSpecNamed {
+    return this.dialog.get();
+  }
+
+  builder(): DialogBuilder {
+    return new DialogBuilder(this);
+  }
+
+  showSpinner(spec?: DialogSpec): void {
+    const component: DialogComponent =
+      spec?.component || ((props): ReactElement => <DefaultSpinner {...props} />);
+    this.spinner.set({ component });
+  }
+
+  hideSpinner(): void {
+    this.spinner.set(undefined);
+  }
+}
 
 /**
- * Provide DialogService implementation.
+ * Provide DialogService.
  */
 export const dialogServiceFactory = (): DialogService => {
-  const store = new DialogSpecStore();
-
-  const service = {
-    _store(): DialogSpecStore {
-      return store;
-    },
-    isShown(): boolean {
-      return store.spec !== undefined;
-    },
-    current(): DialogSpec {
-      if (!store.spec) {
-        throw new Error('No current spec. Maybe need to use `isShown()` beforehand.');
-      }
-      return store.spec;
-    },
-    show(spec: DialogSpec): void {
-      store.spec = spec;
-    },
-    discard(reason?: unknown): void {
-      const onClose = store.spec?.onClose;
-      if (onClose) {
-        setTimeout(() => onClose(reason), 0);
-      }
-      store.spec = undefined;
-    },
-    builder(): DialogBuilder {
-      return new DialogBuilder(service);
-    },
-    spinnerBuilder(): SpinnerBuilder {
-      return new SpinnerBuilder(service);
-    },
-  };
-  return service;
+  return new DialogServiceInternal();
 };

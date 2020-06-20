@@ -7,7 +7,8 @@ const Tester: React.FC = () => {
   const dialog = useDialog();
 
   const showSpinner: MouseEventHandler = (e) => {
-    dialog.spinnerBuilder().setTimeout(30).show();
+    dialog.showSpinner();
+    setTimeout(() => dialog.hideSpinner(), 30);
   };
 
   return (

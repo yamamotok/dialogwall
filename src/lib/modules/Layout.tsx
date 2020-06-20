@@ -31,8 +31,9 @@ export const Layout: React.FC = (props) => {
   // Esc key handling
   useEffect(() => {
     const close = (): void => {
-      if (service.isShown() && service.current().useEscForCancel) {
-        service.discard(false);
+      const current = service.getCurrent();
+      if (current?.useEscForCancel) {
+        service.hide(current, false);
       }
     };
     const onEscPressed = (e: KeyboardEvent): void => {
@@ -44,14 +45,15 @@ export const Layout: React.FC = (props) => {
 
   // When margin area was clicked, dialog might have to be closed.
   const onClick: MouseEventHandler = (e) => {
-    if (!service.isShown() || !service.current().useMarginClickForCancel) {
+    const current = service.getCurrent();
+    if (!current?.useMarginClickForCancel) {
       return;
     }
     const x = e.clientX;
     const y = e.clientY;
     const hit = document.elementFromPoint(x, y);
     if (hit === layoutRef.current) {
-      service.discard(false);
+      service.hide(current, false);
     }
   };
 
