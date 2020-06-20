@@ -1,8 +1,9 @@
 DialogWall
 =============
 
-A React component which provides mechanism to show modal dialogs,
-with very basic built-in dialog and spinner components.
+A **React** component which provides mechanism to show **modal dialogs** and **spinner**,
+with a built-in dialog and a spinner.
+
 
 ## Installation
 
@@ -34,7 +35,7 @@ ReactDOM.render(
 
 ## Use Built-in Dialog
 
-Show a simple dialog with white dialog box.  
+Show a simple dialog with white dialog box. For getting good looks,
 [Bootstrap](https://getbootstrap.com/) is necessary. (Peer dependency)
 
 ```typescript jsx
@@ -62,22 +63,17 @@ const Tester: React.FC = (props) => {
 
 ## Use Built-in Spinner
 
-Show a simple loading spinner.  
-Implemented by using CSS spinner from [Loading.io](https://loading.io/css/).
+Show a simple loading spinner. This is using a CSS spinner from [Loading.io](https://loading.io/css/).
 
 ```typescript jsx
 const Tester: React.FC = (props) => {
   const dialog = useDialog();
 
   const show: MouseEventHandler = (e) => {
-    dialog
-      .spinnerBuilder()
-      .setTimeout(30 * 1000) /* Optional */
-      .show();
+    dialog.showSpinner();
   };
   
-  // Call `dialog.discard()` to hide spinner,
-  // when state was changed for example.
+  // Call `dialog.hideSpinner()` to hide it.
  
   return (
     <div>
