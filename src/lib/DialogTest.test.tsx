@@ -81,10 +81,13 @@ describe('Default Dialog', () => {
     act(() => {
       render(<Main resultCallback={callback} />);
     });
-    act(() => {
+    await act(async () => {
       getByText(document.documentElement, 'OnlyMessage').dispatchEvent(
         new MouseEvent('click', { bubbles: true })
       );
+      return new Promise<void>((resolve => {
+        setTimeout(resolve, 0);
+      }));
     });
     expect(queryByTestId(document.documentElement, 'dialogwall-default-dialog')).not.toBeNull();
 
@@ -108,10 +111,13 @@ describe('Default Dialog', () => {
     act(() => {
       render(<Main resultCallback={callback} />);
     });
-    act(() => {
+    await act(async () => {
       getByText(document.documentElement, 'TwoButtons').dispatchEvent(
         new MouseEvent('click', { bubbles: true })
       );
+      return new Promise<void>((resolve => {
+        setTimeout(resolve, 0);
+      }));
     });
     expect(queryByTestId(document.documentElement, 'dialogwall-default-dialog')).not.toBeNull();
 
@@ -135,10 +141,13 @@ describe('Default Dialog', () => {
     act(() => {
       render(<Main resultCallback={callback} />);
     });
-    act(() => {
+    await act(async () => {
       getByText(document.documentElement, 'CustomResult').dispatchEvent(
         new MouseEvent('click', { bubbles: true })
       );
+      return new Promise<void>((resolve => {
+        setTimeout(resolve, 0);
+      }));
     });
     expect(queryByTestId(document.documentElement, 'dialogwall-default-dialog')).not.toBeNull();
 
@@ -162,10 +171,13 @@ describe('Default Dialog', () => {
     act(() => {
       render(<Main resultCallback={callback} />);
     });
-    act(() => {
+    await act(async () => {
       getByText(document.documentElement, 'EscKey').dispatchEvent(
         new MouseEvent('click', { bubbles: true })
       );
+      return new Promise<void>((resolve => {
+        setTimeout(resolve, 0);
+      }));
     });
     expect(queryByTestId(document.documentElement, 'dialogwall-default-dialog')).not.toBeNull();
 

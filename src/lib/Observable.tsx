@@ -9,7 +9,7 @@ export class Observable<T> {
 
   set(value: T | undefined): void {
     this._store = value;
-    this.notify();
+    setTimeout(() => this.notifyObserver(), 0);
   }
 
   get(): T | undefined {
@@ -19,15 +19,15 @@ export class Observable<T> {
   /**
    * Only one observer can be set.
    */
-  observe(observer: Observer<T>): void {
+  setObserver(observer: Observer<T>): void {
     this._observer = observer;
   }
 
-  stopObserving(): void {
+  deleteObserver(): void {
     this._observer = undefined;
   }
 
-  private notify(): void {
+  private notifyObserver(): void {
     if (this._observer) {
       this._observer(this._store);
     }

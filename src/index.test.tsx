@@ -37,25 +37,33 @@ describe('dialogwall', () => {
     cleanup();
   });
 
-  it('shows dialog', () => {
+  it('shows dialog', async (done) => {
     act(() => {
       render(<App />);
     });
-    act(() => {
+    await act(async () => {
       const button = getByText(document.documentElement, 'showDialog');
       button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      return new Promise<void>((resolve => {
+        setTimeout(resolve, 10);
+      }));
     });
     expect(queryByTestId(document.documentElement, 'dialogwall-default-dialog')).not.toBeNull();
+    done();
   });
 
-  it('shows spinner', () => {
+  it('shows spinner', async (done) => {
     act(() => {
       render(<App />);
     });
-    act(() => {
+    await act(async () => {
       const button = getByText(document.documentElement, 'showSpinner');
       button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      return new Promise<void>((resolve => {
+        setTimeout(resolve, 10);
+      }));
     });
     expect(queryByTestId(document.documentElement, 'dialogwall-default-spinner')).not.toBeNull();
+    done();
   });
 });

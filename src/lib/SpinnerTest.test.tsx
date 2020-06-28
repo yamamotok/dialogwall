@@ -45,14 +45,17 @@ describe('Default Spinner', () => {
     act(() => {
       render(<Main />);
     });
-    act(() => {
+    await act(async () => {
       getByText(document.documentElement, 'ShowSpinner').dispatchEvent(
         new MouseEvent('click', { bubbles: true })
       );
+      return new Promise<void>((resolve => {
+        setTimeout(resolve, 0);
+      }));
     });
     expect(queryByTestId(document.documentElement, 'dialogwall-default-spinner')).not.toBeNull();
 
-    // Wait until spinner disappeared because of timeout
+    // Test component will hide the spinner after 30ms.
     await act(async () => {
       return new Promise<void>((resolve) => {
         setTimeout(resolve, 50);

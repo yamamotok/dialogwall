@@ -31,11 +31,11 @@ const Inner: React.FC<{ service: DialogService }> = ({ service }) => {
 
   useEffect(() => {
     const _service = service as DialogServiceInternal;
-    _service.dialog.observe(setDialog);
-    _service.spinner.observe(setSpinner);
+    _service.dialog.setObserver(setDialog);
+    _service.spinner.setObserver(setSpinner);
     return (): void => {
-      _service.dialog.stopObserving();
-      _service.spinner.stopObserving();
+      _service.dialog.deleteObserver();
+      _service.spinner.deleteObserver();
     };
   }, [service]);
 
