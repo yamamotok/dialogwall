@@ -63,9 +63,9 @@ describe('Custom Dialog', () => {
       getByText(document.documentElement, 'ShowDialog').dispatchEvent(
         new MouseEvent('click', { bubbles: true })
       );
-      return new Promise<void>((resolve => {
+      return new Promise<void>((resolve) => {
         setTimeout(resolve, 0);
-      }));
+      });
     });
     expect(queryByTestId(document.documentElement, 'custom-dialog')).not.toBeNull();
 

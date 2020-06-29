@@ -49,9 +49,9 @@ describe('Default Spinner', () => {
       getByText(document.documentElement, 'ShowSpinner').dispatchEvent(
         new MouseEvent('click', { bubbles: true })
       );
-      return new Promise<void>((resolve => {
+      return new Promise<void>((resolve) => {
         setTimeout(resolve, 0);
-      }));
+      });
     });
     expect(queryByTestId(document.documentElement, 'dialogwall-default-spinner')).not.toBeNull();
 

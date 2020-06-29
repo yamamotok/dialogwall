@@ -85,9 +85,9 @@ describe('Default Dialog', () => {
       getByText(document.documentElement, 'OnlyMessage').dispatchEvent(
         new MouseEvent('click', { bubbles: true })
       );
-      return new Promise<void>((resolve => {
+      return new Promise<void>((resolve) => {
         setTimeout(resolve, 0);
-      }));
+      });
     });
     expect(queryByTestId(document.documentElement, 'dialogwall-default-dialog')).not.toBeNull();
 
@@ -115,9 +115,9 @@ describe('Default Dialog', () => {
       getByText(document.documentElement, 'TwoButtons').dispatchEvent(
         new MouseEvent('click', { bubbles: true })
       );
-      return new Promise<void>((resolve => {
+      return new Promise<void>((resolve) => {
         setTimeout(resolve, 0);
-      }));
+      });
     });
     expect(queryByTestId(document.documentElement, 'dialogwall-default-dialog')).not.toBeNull();
 
@@ -145,9 +145,9 @@ describe('Default Dialog', () => {
       getByText(document.documentElement, 'CustomResult').dispatchEvent(
         new MouseEvent('click', { bubbles: true })
       );
-      return new Promise<void>((resolve => {
+      return new Promise<void>((resolve) => {
         setTimeout(resolve, 0);
-      }));
+      });
     });
     expect(queryByTestId(document.documentElement, 'dialogwall-default-dialog')).not.toBeNull();
 
@@ -175,9 +175,9 @@ describe('Default Dialog', () => {
       getByText(document.documentElement, 'EscKey').dispatchEvent(
         new MouseEvent('click', { bubbles: true })
       );
-      return new Promise<void>((resolve => {
+      return new Promise<void>((resolve) => {
         setTimeout(resolve, 0);
-      }));
+      });
     });
     expect(queryByTestId(document.documentElement, 'dialogwall-default-dialog')).not.toBeNull();
 

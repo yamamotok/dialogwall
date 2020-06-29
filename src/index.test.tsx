@@ -44,9 +44,9 @@ describe('dialogwall', () => {
     await act(async () => {
       const button = getByText(document.documentElement, 'showDialog');
       button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-      return new Promise<void>((resolve => {
+      return new Promise<void>((resolve) => {
         setTimeout(resolve, 10);
-      }));
+      });
     });
     expect(queryByTestId(document.documentElement, 'dialogwall-default-dialog')).not.toBeNull();
     done();
@@ -59,9 +59,9 @@ describe('dialogwall', () => {
     await act(async () => {
       const button = getByText(document.documentElement, 'showSpinner');
       button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-      return new Promise<void>((resolve => {
+      return new Promise<void>((resolve) => {
         setTimeout(resolve, 10);
-      }));
+      });
     });
     expect(queryByTestId(document.documentElement, 'dialogwall-default-spinner')).not.toBeNull();
     done();
