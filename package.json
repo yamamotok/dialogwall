@@ -1,5 +1,5 @@
 {
-  "version": "0.2.1",
+  "version": "0.3.0",
   "name": "dialogwall",
   "main": "dist/src/index.js",
   "types": "dist/index.d.ts",
