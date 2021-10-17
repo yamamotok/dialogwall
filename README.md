@@ -1,16 +1,18 @@
 DialogWall
 =============
 
-A **React** component which provides mechanism to show **modal dialogs** and **spinner**,
-with a built-in dialog and a spinner.
-
+- A **React** component.
+- It provides mechanism to show custom modal dialog and spinner.
+- Tiny preset customizable dialog and spinner are available.
+- ES Module since v0.3.0.
+- [Bootstrap](https://getbootstrap.com/) is a peer dependency. However, in case you only use your customized ones, it is not necessary.
 
 ## Installation
 
 ```shell
 npm install --save dialogwall
 ```
-Type definition is included.
+TypeScript ready. Type definition is included.
 
 
 ## React version
@@ -20,15 +22,15 @@ Since this library is using hook, React version must be >= 16.8
 
 ## Setup
 
-Place `<DialgWall>` as a HOC.
+Place `<DialgWall>` HOC.
 
 ```typescript jsx
 ReactDOM.render(
-  <React.StrictMode>
+  <React>
     <DialogWall>
       <App />
     </DialogWall>
-  </React.StrictMode>,
+  </React>,
   document.getElementById('root')
 );
 ```
@@ -117,4 +119,4 @@ const Page: React.FC = () => {
 ## Licence
 
 MIT  
-
+&copy; Keisuke Yamamoto 2021

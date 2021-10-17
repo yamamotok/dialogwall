@@ -37,7 +37,7 @@ describe('dialogwall', () => {
     cleanup();
   });
 
-  it('shows dialog', async (done) => {
+  it('shows dialog', async () => {
     act(() => {
       render(<App />);
     });
@@ -49,10 +49,9 @@ describe('dialogwall', () => {
       });
     });
     expect(queryByTestId(document.documentElement, 'dialogwall-default-dialog')).not.toBeNull();
-    done();
   });
 
-  it('shows spinner', async (done) => {
+  it('shows spinner', async () => {
     act(() => {
       render(<App />);
     });
@@ -64,6 +63,5 @@ describe('dialogwall', () => {
       });
     });
     expect(queryByTestId(document.documentElement, 'dialogwall-default-spinner')).not.toBeNull();
-    done();
   });
 });

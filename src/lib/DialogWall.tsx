@@ -1,29 +1,14 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { HighWall } from 'highwall';
 
 import './DialogWall.css';
 import { DialogComponentProps } from './DialogComponentProps';
+import { DialogContext } from './DialogContext';
 import { ResultCallback } from './ResultCallback';
 import { DialogService, DialogServiceInternal, dialogServiceFactory } from './DialogService';
 import { Backdrop } from './modules/Backdrop';
 import { Layout } from './modules/Layout';
 import { DialogSpec, DialogSpecNamed } from './DialogSpec';
-
-/**
- * Context, which provides DialogService to child components.
- */
-const DialogContext = React.createContext<DialogService | undefined>(undefined);
-
-/**
- * Utility for using DialogService.
- */
-export function useDialog(): DialogService {
-  const service = useContext(DialogContext);
-  if (!service) {
-    throw Error('DialogContext is undefined, probably caused by implementation error.');
-  }
-  return service;
-}
 
 const Inner: React.FC<{ service: DialogService }> = ({ service }) => {
   const [dialog, setDialog] = useState<DialogSpecNamed | undefined>(undefined);
@@ -47,9 +32,7 @@ const Inner: React.FC<{ service: DialogService }> = ({ service }) => {
       service.hide(dialog, reason);
     };
     return (
-      <Layout>
-        {React.createElement<DialogComponentProps>(dialog.component, { close })}
-      </Layout>
+      <Layout>{React.createElement<DialogComponentProps>(dialog.component, { close })}</Layout>
     );
   };
 
@@ -61,9 +44,7 @@ const Inner: React.FC<{ service: DialogService }> = ({ service }) => {
       service.hideSpinner();
     };
     return (
-      <Layout>
-        {React.createElement<DialogComponentProps>(spinner.component, { close })}
-      </Layout>
+      <Layout>{React.createElement<DialogComponentProps>(spinner.component, { close })}</Layout>
     );
   };
 

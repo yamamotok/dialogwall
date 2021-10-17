@@ -1,9 +1,10 @@
 import React, { MouseEventHandler } from 'react';
 import { act, cleanup, getByText, queryByTestId, render } from '@testing-library/react';
 
-import { DialogWall, useDialog } from './DialogWall';
+import { DialogWall } from './DialogWall';
 import { DialogComponent } from './DialogComponent';
 import { ResultCallback } from './ResultCallback';
+import { useDialog } from './useDialog';
 
 const CustomDialog: DialogComponent = (props) => {
   return (
@@ -54,7 +55,7 @@ describe('Custom Dialog', () => {
     cleanup();
   });
 
-  it('returns result properly', async (done) => {
+  it('returns result properly', async () => {
     const callback = jest.fn();
     act(() => {
       render(<Main resultCallback={callback} />);
@@ -80,7 +81,5 @@ describe('Custom Dialog', () => {
     });
     expect(queryByTestId(document.documentElement, 'custom-dialog')).toBeNull();
     expect(callback).toHaveBeenCalledWith(true);
-
-    done();
   });
 });

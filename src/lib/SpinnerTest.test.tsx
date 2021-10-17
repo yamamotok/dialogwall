@@ -1,7 +1,8 @@
 import React, { MouseEventHandler } from 'react';
 import { act, cleanup, getByText, queryByTestId, render } from '@testing-library/react';
 
-import { DialogWall, useDialog } from './DialogWall';
+import { DialogWall } from './DialogWall';
+import { useDialog } from './useDialog';
 
 const Tester: React.FC = () => {
   const dialog = useDialog();
@@ -41,7 +42,7 @@ describe('Default Spinner', () => {
     expect(queryByTestId(document.documentElement, 'dialogwall-default-spinner')).toBeNull();
   });
 
-  it('renders spinner', async (done) => {
+  it('renders spinner', async () => {
     act(() => {
       render(<Main />);
     });
@@ -62,7 +63,5 @@ describe('Default Spinner', () => {
       });
     });
     expect(queryByTestId(document.documentElement, 'dialogwall-default-spinner')).toBeNull();
-
-    done();
   });
 });
