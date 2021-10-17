@@ -2,7 +2,7 @@ import React, { MouseEventHandler, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 
 import './Layout.css';
-import { useDialog } from '../DialogWall';
+import { useDialog } from '../useDialog';
 
 /**
  * Phase.

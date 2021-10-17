@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 
 import './DefaultSpinner.css';
 import { DialogComponent } from '../DialogComponent';
-import { useDialog } from '../DialogWall';
+import { useDialog } from '../useDialog';
 
 export interface DefaultSpinnerProps {
   /**

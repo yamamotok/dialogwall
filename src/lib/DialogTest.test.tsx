@@ -1,9 +1,10 @@
 import React, { MouseEventHandler } from 'react';
 import { act, cleanup, getByText, queryByTestId, render } from '@testing-library/react';
 
-import { DialogWall, useDialog } from './DialogWall';
+import { DialogWall } from './DialogWall';
 import { ResultCallback } from './ResultCallback';
 import { DEFAULT_POSITIVE_BUTTON_LABEL } from './modules/DefaultDialog';
+import { useDialog } from './useDialog';
 
 interface TesterProps {
   resultCallback: ResultCallback;
@@ -76,7 +77,7 @@ describe('Default Dialog', () => {
     expect(queryByTestId(document.documentElement, 'dialogwall-default-dialog')).toBeNull();
   });
 
-  it('shows simplest dialog', async (done) => {
+  it('shows simplest dialog', async () => {
     const callback = jest.fn();
     act(() => {
       render(<Main resultCallback={callback} />);
@@ -102,11 +103,9 @@ describe('Default Dialog', () => {
     });
     expect(queryByTestId(document.documentElement, 'dialogwall-default-dialog')).toBeNull();
     expect(callback).toHaveBeenCalledWith(true);
-
-    done();
   });
 
-  it('shows two-button dialog', async (done) => {
+  it('shows two-button dialog', async () => {
     const callback = jest.fn();
     act(() => {
       render(<Main resultCallback={callback} />);
@@ -132,11 +131,9 @@ describe('Default Dialog', () => {
     });
     expect(queryByTestId(document.documentElement, 'dialogwall-default-dialog')).toBeNull();
     expect(callback).toHaveBeenCalledWith(false);
-
-    done();
   });
 
-  it('returns custom dialog result', async (done) => {
+  it('returns custom dialog result', async () => {
     const callback = jest.fn();
     act(() => {
       render(<Main resultCallback={callback} />);
@@ -162,11 +159,9 @@ describe('Default Dialog', () => {
     });
     expect(queryByTestId(document.documentElement, 'dialogwall-default-dialog')).toBeNull();
     expect(callback).toHaveBeenCalledWith('custom_result');
-
-    done();
   });
 
-  it('is closed by ESC key press', async (done) => {
+  it('is closed by ESC key press', async () => {
     const callback = jest.fn();
     act(() => {
       render(<Main resultCallback={callback} />);
@@ -190,7 +185,5 @@ describe('Default Dialog', () => {
     });
     expect(queryByTestId(document.documentElement, 'dialogwall-default-dialog')).toBeNull();
     expect(callback).toHaveBeenCalledWith(false);
-
-    done();
   });
 });
